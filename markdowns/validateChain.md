@@ -1,6 +1,6 @@
 # Validate Chain
 
-Validate the Blockchain.
+Verify if the Blockchain is valid.
 
 **URL** : `/api/validateChain/`
 
@@ -15,8 +15,6 @@ Validate the Blockchain.
 **Code** : `200 OK`
 
 **Content examples**
-
-For a `index: 1` :
 
 ```json
 {

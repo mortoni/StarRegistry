@@ -74,6 +74,16 @@ class Mempool {
         return false;
     }
 
+    isAddressValid(walletAddress){
+        let isValid = false;
+        this.mempoolValid.map(val => {
+            if (val.status.address === walletAddress) {
+                isValid =  true;
+            }
+        })
+        return isValid;
+    }
+
 
 }
 

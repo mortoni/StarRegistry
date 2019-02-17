@@ -24,11 +24,11 @@ class Blockchain {
 
     async getBlockHeight() { return await this.bd.getBlocksCount() - 1 }
 
-    async addBlock(block) { //FIXME:
+    async addBlock(block) {
         const height = await this.getBlockHeight();
         block.height = height + 1;
         block.time = this.time();
-
+        
         if (block.height > 0) {
             const pBlock = await this.getBlock(height);
             block.previousBlockHash = pBlock.hash
@@ -37,7 +37,8 @@ class Blockchain {
         }
 
         block.hash = this.hash(block);
-        return this.bd.addLevelDBData(block.height, JSON.stringify(block))
+        this.bd.addLevelDBData(block.height, JSON.stringify(block));
+        return block;
     }
 
     async getBlock(height) {
@@ -74,13 +75,24 @@ class Blockchain {
     }
 
     _modifyBlock(height, block) {
-        let self = this;
         return new Promise( (resolve, reject) => {
-            self.bd.addLevelDBData(height, JSON.stringify(block)
+            this.db.addLevelDBData(height, JSON.stringify(block)
                 .toString())
                 .then((blockModified) => resolve(blockModified))
                 .catch((err) => reject(err));
         });
+    }
+
+    getBlockByHash(hash) {
+        return this.bd.getBlockByHash(hash).then(block => block);
+    }
+
+    getBlockByWalletAddress(address) {
+        return this.bd.getBlockByWalletAddress(address).then(blocks => blocks);
+    }
+
+    getBlockByHeight(height) {
+        return this.bd.getBlockByHeight(height).then(block => block);
     }
 }
 

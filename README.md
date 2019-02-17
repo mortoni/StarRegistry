@@ -15,15 +15,17 @@ The framework for the API is `express`.
 
 ## Open Endpoints
 
-* [getBlockByIndex](./markdowns/getBlockByIndex.md) : `GET /api/block/:index`
-* [postNewBlock](./markdowns/postNewBlock.md) : `POST /api/block/`
-* [getBlockHeight](./markdowns/getBlockHeight.md) : `GET /api/getBlockHeight/`
-* [validateBlock](./markdowns/validateBlock.md) : `GET /api/validateBlock/:index`
-* [validateChain](./markdowns/validateChain.md) : `GET /api/validateChain/`
+* [requestValidation](./markdowns/requestValidation.md) : `POST /requestValidation`
+* [validateMessageSignature](./markdowns/validateMessageSignature.md) : `POST /message-signature/validate`
+* [addBlock](./markdowns/addBlock.md) : `POST /block`
+* [validateChain](./markdowns/validateChain.md) : `GET /validateChain`
+* [getBlockByHash](./markdowns/getBlockByHash.md) : `GET /stars/hash:[HASH]`
+* [getBlockByWalletAddress](./markdowns/getBlockByWalletAddress.md) : `GET /stars/address/:[ADDRESS]`
+* [getBlockByHeight](./markdowns/getBlockByHeight.md) : `GET /block/:[HEIGHT]`
 
 ## Hints
 
-1. Start creating a block with [postNewBlock](./markdowns/postNewBlock.md) endpoint and then you will be able to call other endpoint.
+1. Start creating a block with [addBlock](./markdowns/postNewBlock.md) endpoint and then you will be able to call other endpoint.
 
 ## Authors
 

@@ -1,7 +1,6 @@
 const Mempool = require('./Mempool');
 const Util = require('./Util');
 const BlockChain = require('./BlockChain.js');
-const SHA256 = require('crypto-js/sha256');
 const Block = require('./Block.js');
 
 let blockChain = new BlockChain.Blockchain();
@@ -13,22 +12,17 @@ class BlockController {
         this.app = app;
         this.blocks = [];
         
+        this.getBlockByHash();
+        this.getBlockByHeight();
+        this.getBlockByWalletAddress();
         this.addRequestValidation();
         this.validateMessageSignature();
-        this.createStar();
+        this.addBlock();
         this.validateChain();
-        this.getBlockByIndex();
-        this.validateChain();
-        this.getBlockHeight();
-        this.isIndex();
     }
 
     setupMessage(req) {
         return `${req.walletAddress}:${req.requestTimeStamp}:starRegistry`;
-    }
-
-    isIndex(i) {
-        return !isNaN(parseFloat(i)) && i >= 0;
     }
 
     addRequestValidation() {
@@ -64,52 +58,56 @@ class BlockController {
         });
     }
 
-    createStar() {
-        this.app.post('/createStart', (req, res) => {
-            const { address, dec, ra, story} = req.body;
-            console.log(req.body);
+    addBlock() {
+        this.app.post('/block', (req, res) => {
+            const { address, dec, ra, story } = req.body;
             
             if (address && dec && ra && story) {
-                const block = {
-                    address: address,
-                    star: {
-                        dec: dec,
-                        ra: ra,
-                        story: Buffer(story).toString('hex'),
-                    },
-                };
-
-                blockChain.addBlock(block);
-
-                res.json(block);
+                if(mempool.isAddressValid(address)) {
+                    let block = new Block.Block(req.body);
+                    blockChain.addBlock(block).then((result) => {
+                        res.json(result);
+                    }).catch((err) => res.json({ result: null }));
+                } else {
+                    res.send('The address is not valid!');
+                }
+                
             } else {
                 res.send('The request has no or content is missing!');
             }
         });
     }
 
-    getBlockByIndex() {
-        this.app.get("/api/block/:index", (req, res) => {
-            const { index } = req.params;
-
-            if (!this.isIndex(index)) {
-                res.send('The parameter is not valid!');
+    getBlockByHash() {
+        this.app.get('/stars/hash/:hash', (req, res) => {
+            const { hash } = req.params;
+            
+            if (hash) {
+                blockChain.getBlockByHash(hash).then(block => {
+                    res.json(block);
+                }).catch((err) => res.json({ block: null }));
             } else {
-                blockChain.getBlockHeight().then((maxHeight) => {
-                    if (index <= maxHeight) {
-                        blockChain.getBlock(index).then((block) => {
-                            res.json(block);
-                        }).catch((err) => console.log(err));
-                    } else {
-                        res.send(`The height(${index}) parameter is out of bounds`);
-                    }
-                });
+                res.send('The request has no or content is missing!');
+            }
+        });
+    }
+
+    getBlockByWalletAddress() {
+        this.app.get('/stars/address/:address', (req, res) => {
+            const { address } = req.params;
+            console.log(address);
+            if (address) {
+                blockChain.getBlockByWalletAddress(address).then(blocks => {
+                    res.json(blocks);
+                }).catch((err) => res.json({ blocks: null }));
+            } else {
+                res.send('The request has no or content is missing!');
             }
         });
     }
 
     validateChain() {
-        this.app.get("/api/validateChain", (req, res) => {
+        this.app.get("/validateChain", (req, res) => {
 
             blockChain.validateChain().then((errorLog) => {
             	if(errorLog.length > 0){
@@ -117,30 +115,16 @@ class BlockController {
             	} else {
             		res.json({isValid: true});
             	}
-            }).catch((error) => res.json({ isValid: null }));
+            }).catch((err) => res.json({ isValid: null }));
         });
     }
 
-    validateBlock() {
-        this.app.get("/api/validateBlock/:index", (req, res) => {
-            const { index } = req.params;
-
-            if (!this.isIndex(index)) {
-                res.send('The parameter is not valid!');
-            } else {
-                blockChain.validateBlock(index).then((valid) => {
-                	res.json({ isValid: valid });
-                }).catch((error) => res.json({ isValid: null }));
-            }
-        });
-
-    }
-
-    getBlockHeight() {
-        this.app.get("/api/getBlockHeight", (req, res) => {
-            blockChain.getBlockHeight().then((height) => {
-            	res.json({ height });
-            }).catch((err) => res.json({ height: null }));
+    getBlockByHeight() {
+        this.app.get("/block/:height", (req, res) => {
+            const { height } = req.params;
+            blockChain.getBlockByHeight(height).then((block) => {
+            	res.json(block);
+            }).catch((err) => res.json({ block: null }));
         });
     }
     
