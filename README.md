@@ -25,7 +25,11 @@ The framework for the API is `express`.
 
 ## Hints
 
-1. Start creating a block with [addBlock](./markdowns/postNewBlock.md) endpoint and then you will be able to call other endpoint.
+1. Start out by submitting a validation request [requestValidation](./markdowns/requestValidation.md).
+2. Then send a validation request [validateMessageSignature](./markdowns/validateMessageSignature.md).
+3. Use your electrum wallet, sign the message with the wallet address you use to submit your request.
+![Screenshot](./imgs/electrum.png)
+4. Send star data to be stored [addBlock](./markdowns/addBlock.md).
 
 ## Authors
 
