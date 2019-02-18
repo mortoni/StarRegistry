@@ -11,7 +11,7 @@ class Blockchain {
     async generateGenesisBlock(){
         const height = await this.getBlockHeight();
         if (height === -1) {
-            const block = new Block.Block({
+            const block = new Block({
                 address: 'non-valid-address',
                 star: {
                     dec: "68° 52' 56.9",

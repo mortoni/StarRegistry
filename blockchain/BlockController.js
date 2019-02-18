@@ -66,7 +66,7 @@ class BlockController {
         this.app.post('/block', (req, res) => {
             if (this.isStartObject(req.body)) {
                 if(mempool.isAddressValid(req.body.address)) {
-                    let block = new Block.Block(req.body);
+                    let block = new Block(req.body);
                     blockChain.addBlock(block).then((result) => {
                         mempool.removeWalletAddress(result.body.address);
                         res.json(result);

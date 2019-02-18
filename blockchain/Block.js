@@ -1,5 +1,7 @@
 class Block {
     constructor(data){
+        data.star.story = Buffer(data.star.story).toString('hex');
+
         this.hash = '',
         this.height = 0,
         this.body = data,
@@ -8,4 +10,4 @@ class Block {
     }
 }
 
-module.exports.Block = Block;
+module.exports = Block;
