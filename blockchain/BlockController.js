@@ -58,14 +58,17 @@ class BlockController {
         });
     }
 
+    isStartObject(object) {
+        return object.address && object.star.dec && object.star.ra && object.star.story;
+    }
+
     addBlock() {
         this.app.post('/block', (req, res) => {
-            const { address, dec, ra, story } = req.body;
-            
-            if (address && dec && ra && story) {
-                if(mempool.isAddressValid(address)) {
+            if (this.isStartObject(req.body)) {
+                if(mempool.isAddressValid(req.body.address)) {
                     let block = new Block.Block(req.body);
                     blockChain.addBlock(block).then((result) => {
+                        mempool.removeWalletAddress(result.body.address);
                         res.json(result);
                     }).catch((err) => res.json({ result: null }));
                 } else {
@@ -79,9 +82,8 @@ class BlockController {
     }
 
     getBlockByHash() {
-        this.app.get('/stars/hash/:hash', (req, res) => {
+        this.app.get('/stars/hash::hash', (req, res) => {
             const { hash } = req.params;
-            
             if (hash) {
                 blockChain.getBlockByHash(hash).then(block => {
                     res.json(block);
@@ -93,9 +95,8 @@ class BlockController {
     }
 
     getBlockByWalletAddress() {
-        this.app.get('/stars/address/:address', (req, res) => {
+        this.app.get('/stars/address::address', (req, res) => {
             const { address } = req.params;
-            console.log(address);
             if (address) {
                 blockChain.getBlockByWalletAddress(address).then(blocks => {
                     res.json(blocks);
@@ -127,7 +128,6 @@ class BlockController {
             }).catch((err) => res.json({ block: null }));
         });
     }
-    
 }
 
 module.exports = (app) => { return new BlockController(app);}

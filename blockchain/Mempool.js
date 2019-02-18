@@ -84,7 +84,13 @@ class Mempool {
         return isValid;
     }
 
-
+    removeWalletAddress(walletAddress) {        
+        this.mempoolValid = this.mempoolValid.filter(val => {
+            if (val.status.address !== walletAddress) {
+                return val;
+            }
+        })
+    }
 }
 
 module.exports.Mempool = Mempool;

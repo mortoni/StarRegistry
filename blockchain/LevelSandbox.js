@@ -42,22 +42,18 @@ class LevelSandbox {
 
     getBlockByHash(hash) {        
         let self = this;
-        let block = null;
         return new Promise((resolve, reject) => {
             self.db.createReadStream()
             .on('data', (data) => {
                 const object = JSON.parse(data.value);
                 
                 if(object.hash === hash) {
-                    object.body.star.storyDecoded =  hex2ascii(object.body.star.story);
-                    block = object;
+                    object.body.star.storyDecoded = hex2ascii(object.body.star.story);
+                    resolve(object);
                 }
             })
             .on('error', (err) => {
                 reject(err)
-            })
-            .on('close', () => {
-                resolve(block);
             });
         });
     }
@@ -73,35 +69,29 @@ class LevelSandbox {
                 if(object.body.address === address) {
                     object.body.star.storyDecoded =  hex2ascii(object.body.star.story);
                     blocks.push(object);
+                    resolve(blocks);
                 }
             })
             .on('error', (err) => {
                 reject(err)
-            })
-            .on('close', () => {
-                resolve(blocks);
             });
         });
     }
 
     getBlockByHeight(height) {
         let self = this;
-        let block = null;
         return new Promise((resolve, reject) => {
             self.db.createReadStream()
             .on('data', (data) => {
                 const object = JSON.parse(data.value);
                 
-                if(object.height == height) {
+                if(object.height == height) {                    
                     object.body.star.storyDecoded =  hex2ascii(object.body.star.story);
-                    block = object;
+                    resolve(object);
                 }
             })
             .on('error', (err) => {
                 reject(err)
-            })
-            .on('close', () => {
-                resolve(block);
             });
         });
     }

@@ -10,8 +10,15 @@ class Blockchain {
 
     async generateGenesisBlock(){
         const height = await this.getBlockHeight();
-        if (height === 0) {
-            const block = new Block.Block('Genesis Block')
+        if (height === -1) {
+            const block = new Block.Block({
+                address: 'non-valid-address',
+                star: {
+                    dec: "68° 52' 56.9",
+                    ra: "16h 29m 1.0s",
+                    story: "This is the Genesis Block"
+                }
+            })
             block.time = this.time();
             block.hash = this.hash(block);
             this.bd.addLevelDBData(block.height, JSON.stringify(block));
